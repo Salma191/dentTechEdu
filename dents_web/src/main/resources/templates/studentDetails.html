@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Gestion Des Travaux Pratiques</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+	<style>
+		body {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			min-height: 100vh;
+			overflow-x: hidden;
+			background-color: white;
+		}
+
+
+		.image-info-container {
+			display: flex;
+
+			margin-bottom: 10px;
+		}
+
+		.image-info-container img {
+			width: 240px;
+			/* Taille des images */
+			height: 180px;
+			border-radius: 20px;
+			/* Bord arrondi */
+		}
+
+		.button-container {
+			display: flex;
+			/* Utilisation de Flexbox */
+			justify-content: space-between;
+			/* Espace égal entre les boutons */
+		}
+
+		.bg {
+			background-color: rgb(209 213 219);
+		}
+
+
+		.content {
+			padding-left: 40px;
+		}
+
+		.text-center {
+            overflow-wrap: anywhere;
+        }
+
+		.button-container {
+			display: flex;
+			/* Utilisation de Flexbox */
+			justify-content: space-between;
+			/* Espace égal entre les boutons */
+		}
+
+		.text-center {
+			overflow-wrap: anywhere;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<div th:replace="sidebar-fragment"></div>
+	<div class="content">
+		<div th:switch="${studentPWs}" class="relative flex flex-col w-11/12 p-5 ml-10 mr-10
+		mb-10  justify-center items-center">
+
+
+			<h2 th:case="null" class="text-5xl font-bold my-4 mt-60">No Completed Assignments for this Group</h2>
+			<div th:case="*" class="w-full text-center">
+				<h2 class="text-2xl font-bold my-8 w-full py-2 bg rounded-lg text-black shadow-2xl">
+					List of Completed Assignments</h2>
+				<div class="grid grid-cols-3 gap-3 w-full">
+					<div th:each="studentpw,stat : ${studentPWs}"
+						class="relative justify-center items-center flex flex-col bg rounded-lg shadow-2xl p-3 mb-4 mx-2">
+
+						<span class="text-center mb-3">
+							<p th:text="|Title  :  ${studentpw.pw.title}|" class="text-2xl font-bold  text-black "></p>
+							<p th:text="|Student  :  ${studentpw.student.firstName} ${studentpw.student.lastName}|"
+								class="text-lg  text-black"></p>
+
+							<p th:text="|Group  :  ${studentpw.student.groupe.code}|" class="text-lg  text-black "></p>
+
+							<p th:text="|Date : ${studentpw.date}|" class="text-lg  text-black"></p>
+							<p th:text="|Note : ${studentpw.note}|" class="text-lg text-black"></p>
+							<p th:text="|Remark : ${studentpw.remarque}|" class="text-lg text-black"></p>
+
+						</span>
+
+
+						<div class="button-container">
+							<button type="button">
+								<a th:href="@{/prof/valider1/{studentId}/{pwId}(studentId=${studentpw.id.student_id}, pwId=${studentpw.id.pw_id})}"
+									class="flex items-center">
+									<span
+										class="bg-black text-white font-bold px-4 py-1.5 rounded-md mr-4  hover:bg-white hover:text-black">validate</span>
+
+								</a>
+							</button>
+							<button type="button">
+								<a th:href="@{/prof/voirdetail/{studentId}/{pwId}(studentId=${studentpw.id.student_id}, pwId=${studentpw.id.pw_id})}"
+									class="flex items-center">
+									<span
+										class="bg-black text-white font-bold px-4 py-1.5 rounded-md mr-4  hover:bg-white hover:text-black">View
+										PW</span>
+								</a>
+							</button>
+						</div>
+
+
+
+
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="validationContainer" th:if="${mode eq 'valider'}"
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+			<div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center">
+
+				<form id="validationForm" th:action="@{/prof/validertp/{id1}/{id2}(id1=${studentId}, id2=${pwId})}"
+					method="post"
+					class="w-full max-w-sm mx-auto flex flex-col items-center justify-center p-8 bg-gray-100 rounded-3xl shadow-md border-2 border-black justify-center pt-2 items-center">
+					<a th:href="@{#}" onclick="hideForm()" class=" text-xl text-gray-900 font-bold hover:scale-125  "
+						style="margin-left: 330px; ">
+						<i class="bi bi-x-lg"></i>
+					</a>
+
+
+
+
+
+					<p class="text-3xl font-bold mb-4 text-black">Validate PW</p>
+
+
+
+					<div class="w-4/5 flex flex-col my-4">
+						<label for="name" class="block text-lg font-medium text-black font-bold mb-2">
+						</label>
+						<textarea id="name" type="text" placeholder="Enter remark"
+							class="rounded text-sm py-2 px-4 my-2 w-full  border-2 border-black w-36 h-20   focus:outline-none focus:ring  "
+							name="remarque"></textarea>
+					</div>
+
+
+					<div class="flex justify-center items-center">
+						<button type="submit"
+							class="bg-black text-white hover:bg-white hover:text-black  font-medium px-4 py-1.5 rounded-md ">Submit</button>
+					</div>
+
+
+				</form>
+			</div>
+		</div>
+		<!-- <div th:if="${mode eq 'voir'}"
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+			<div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center">
+
+				<div class=" w-full  mx-auto p-2 bg-gray-100 rounded-lg shadow-md border-2 border-black justify-center items-center"
+					style="width: 650px;" th:object="${spww}">
+
+
+
+					<div class="flex-container">
+						<a th:href="@{/prof/gettpstudent(id=${id})}" class=" text-xl text-gray-900 font-bold hover:scale-125  "
+							style="margin-left: 600px; ">
+							<i class="bi bi-x-lg"></i>
+						</a>
+						<div class="image-info-container ">
+							<img th:if="${p1 != null}" th:src="'data:image/jpeg;base64,' + ${p1}" alt="Tp Photo"
+								class="p-7 pt-3 pb-3" />
+							<div>
+								<p class="text-2xl font-bold text-black ml-20">Les angles Internes</p>
+								<p th:text="${spww.internes}" class="font-medium text-2xl text-black mt-8 ml-20"></p>
+							</div>
+						</div>
+
+						<div class="image-info-container ">
+							<img th:if="${p2 != null}" th:src="'data:image/jpeg;base64,' + ${p2}" alt="Tp Photo"
+								class="p-7 pt-3 pb-3" />
+							<div>
+								<p class="text-2xl font-bold text-black ml-20">Les angles Externes</p>
+								<p th:text="${spww.externes}" class="font-medium text-2xl text-black mt-8 ml-20"></p>
+							</div>
+						</div>
+
+						<div class="image-info-container">
+							<img th:if="${p3 != null}" th:src="'data:image/jpeg;base64,' + ${p3}" alt="Tp Photo"
+								class="p-7 pt-3 pb-3" />
+							<div>
+								<p class="text-2xl font-bold text-black ml-20">Les angles de Depouilles</p>
+								<p th:text="${spww.depouilles}" class="font-medium text-2xl text-black mt-8 ml-20"></p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div> -->
+		<div id="contentToPrint" th:if="${mode eq 'voir'}"
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+			<div class="relative  w-2/3 flex flex-col items-center justify-center" style="height: 650px;">
+				
+				<div class="  p-2 bg-white rounded-lg shadow-md border-2 border-black justify-center items-center overflow-y-auto " style="width: 700px;"
+					th:object="${spww}">
+					<a th:href="@{/prof/gettpstudent(id=${id})}" class=" fixed text-xl text-gray-900 font-bold hover:scale-125  " style="margin-left: 640px; ">
+						<i class="bi bi-x-lg"></i>
+				</a>
+					<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQBLSWHAxMQn8Lb_NsN2D_UsDM5z1iexYWwcvgvjBYZmNsMtdxh8me7soXwlxpiltvHvw&usqp=CAU">
+					
+
+
+					<div class="flex-container ">
+						<p th:text="|Report of ${spww.pw.title}|" class="font-bold text-3xl text-center border-2 border-black  p-2 mr-20 ml-20 mt-8"></p>
+						<p th:text="| First Name    : ${spww.student.firstName}|" class=" text-xl    mr-20 ml-20 mt-8"></p>
+						<p th:text="| Last Name     : ${spww.student.lastName}|" class="  text-xl     mr-20 ml-20 mt-2"></p>
+						<p th:text="| Group        : ${spww.student.groupe.code}|" class="  text-xl     mr-20 ml-20 mt-2"></p>
+						<p th:text="| Professor     : ${spww.student.groupe.professor.firstName} ${spww.student.groupe.professor.lastName}|" class="  text-xl    mr-20 ml-20 mt-2"></p>
+						
+						<p th:text="| Tooth         : ${spww.pw.tooth.name}|" class="  text-xl    mr-20 ml-20 mt-6"></p>
+						<p th:text="| Preparation   : ${spww.pw.preparation.type} |" class="  text-xl     mr-20 ml-20 mt-2"></p>
+						
+						<p th:text="| Objectif      : ${spww.pw.objectif}|" class=" text-xl     mr-20 ml-20 mt-2"></p>
+					
+						<p class="font-bold  text-2xl    mr-20 ml-20 mt-8">I. Internal Angles :</p>
+						
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">1. Measurements :</p>
+						<img th:if="${p1 != null}" th:src="'data:image/jpeg;base64,' + ${p1}" alt="Tp Photo" class="items-center mt-6 mr-10 ml-60 " style="width: 200px; height: 200px;" />
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">2. Results :</p>
+						<p th:text="|Using The Mobile App ,the following measurements were found (${spww.internes}) degree.|" class="  text-md  mr-10 ml-20 mt-2"></p>
+
+						<p class="font-bold  text-2xl    mr-20 ml-20 mt-8">II. External Angles :</p>
+						
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">1. Measurements :</p>
+						<img th:if="${p2 != null}" th:src="'data:image/jpeg;base64,' + ${p2}" alt="Tp Photo" class="items-center mt-6 mr-10 ml-60 " style="width: 200px; height: 200px;"  />
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">2. Results :</p>
+						<p th:text="|Using The Mobile App ,the following measurements were found (${spww.externes}) degree.|" class="  text-md  mr-10 ml-20 mt-2"></p>
+						<p class="font-bold  text-2xl    mr-20 ml-20 mt-8">III. External Angles :</p>
+						
+						
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">1. Measurements :</p>
+						<img th:if="${p3 != null}" th:src="'data:image/jpeg;base64,' + ${p3}" alt="Tp Photo" class="items-center mt-6 mr-10 ml-60 " style="width: 200px; height: 200px;"  />
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">2. Results :</p>
+						<p th:text="|Using The Mobile App ,the following measurements were found (${spww.depouilles}) degree.|" class="  text-md  mr-10 ml-20 mt-2 mb-10"></p>
+
+						<button id="downloadBtn" class="bg-black text-xl font-bold text-white items-center hover:bg-white hover:text-black px-4 py-1.5 rounded-md justify-center ml-60 mb-10">Download PDF</button>
+						
+						
+						
+
+						
+						
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div th:switch="${page}">
+			<div th:case="p">
+				<h2 align="center" class="font-bold text-4xl text-gray-900 mb-2">Learning Curve</h2>
+				<div id="container" class="border-2 border-black mb-6 mt-8 pt-4"
+					style="width: 1100px; height: 600px; margin-left: 40px;"></div>
+			</div>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+		<script src="https://code.highcharts.com/modules/exporting.js"></script>
+		<script th:inline="javascript">
+
+
+			function submitForm() {
+				document.getElementById('myForm').submit();
+			}
+
+			$(function () {
+				Highcharts.chart('container', {
+					chart: {
+						type: 'spline'
+					},
+					title: {
+						text: 'Notes per student'
+					},
+					subtitle: {
+						text: ''
+					},
+					xAxis: {
+						categories: [[${ names }]],
+						crosshair: true
+					},
+					yAxis: {
+						min: 0,
+						max: 20,
+						title: {
+							text: 'Notes'
+						}
+					},
+					tooltip: {
+						headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+						pointFormat: '<tr><td style="color:red;padding:0">Note: </td>' +
+							'<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+						footerFormat: '</table>',
+						shared: true,
+						useHTML: true
+					},
+					plotOptions: {
+						spline: {
+							marker: {
+								radius: 4,
+								lineColor: '#666666',
+								lineWidth: 1
+							}
+						}
+					},
+					series: [{
+						name: 'Note ',
+						data: [[${ nbrs }]]
+					}]
+				});
+			});
+
+			function hideForm() {
+				var container = document.getElementById('validationContainer');
+				// Rend le conteneur invisible
+				container.style.display = 'none';
+				// Supprime le flou de l'arrière-plan
+				document.querySelector('body').style.overflow = 'auto';
+			}
+		</script>
+		<script>
+			document.getElementById('downloadBtn').addEventListener('click', function() {
+					var content = document.getElementById('contentToPrint').innerHTML;
+					var printWindow = window.open('', '', 'width=800,height=600');
+					printWindow.document.open();
+					// Ajoutez le lien vers Tailwind CSS dans la section head du document
+					printWindow.document.write('<html><head><title>Imprimer</title><link rel="stylesheet" href="https://cdn.tailwindcss.com"></head><body>');
+					printWindow.document.write(content);
+					printWindow.document.write('</body></html>');
+					printWindow.document.close();
+					printWindow.print();
+			});
+	</script>
+		
+</body>
+
+</html>
+
+</body>
+
+
+</body>
+
+</html>

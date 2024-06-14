@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+	<style>
+		body {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			min-height: 100vh;
+			overflow-x: hidden;
+
+		}
+
+
+		.content {
+			padding-left: 40px;
+		}
+	</style>
+</head>
+
+<body>
+	<div th:replace="sidebar-fragment"></div>
+	<div class="content">
+		<div th:switch="${students}" class="relative flex flex-col w-11/12 p-5 m-10 justify-center items-center">
+			<h2 th:case="null" class="text-xl font-semibold my-4">Pas De Etudiants Pour Le Moment</h2>
+			<div th:case="*" class="w-full text-center" th:each="student,stat : ${students}">
+				<h2 th:text="|La Liste Des Étudiants Du Groupe ${student.groupe.code} ${student.groupe.year}|"
+					class="text-2xl font-semibold my-8 w-full py-2 bg-gray-900 rounded-lg text-white shadow-2xl"></h2>
+
+				<div class="grid grid-cols-3 gap-3 w-full">
+					<div th:each="student,stat : ${students}"
+						class="relative justify-center items-center flex flex-col bg-gray-600 rounded-lg shadow-2xl p-3 mb-4 mx-2">
+						<span class="px-6 pt-6 pb-3 mb-2 w-2/3"
+							style="width: 200px; height: 200px; display: block; overflow: hidden;">
+							<img th:if="${encodedPhotos != null && encodedPhotos[stat.index] != null && encodedPhotos[stat.index] != ''}"
+								th:src="'data:image/jpeg;base64,' + ${encodedPhotos[stat.index]}" alt="Professor Photo"
+								class="hover:scale-125 w-full h-full" style="object-fit: cover;" />
+						</span>
+
+						<span class="text-center mb-3">
+							<p th:text="|${student.firstName} ${student.lastName}|"
+								class="font-bold text-2xl text-white"></p>
+							<p th:text="${student.email}" class="text-lg text-white"></p>
+							<p th:text="|Numéro  :  ${student.number}|" class="text-lg text-white"></p>
+							<p th:text="|Groupe :${student.groupe.code}|" class="text-lg text-white font-bold"></p>
+						</span>
+						<form th:action="@{/prof/gettpstudent}" method="get" id="myformf">
+							<input hidden type="text" name="id" th:value="${student.id}">
+							<button type="submit"> <a th:href="@{#}" class="mt-2">
+									<i
+										class="bi bi-info-circle absolute bottom-1 justify-center text-lg text-blue-500 hover:text-blue-300 hover:scale-125"></i>
+								</a></button>
+						</form>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+
+
+
+</body>
+
+</html>

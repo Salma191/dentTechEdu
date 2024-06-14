@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-color:white;
+        }
+
+        
+
+
+        .content {
+            padding-left: 40px;
+        }
+        .text-center {
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="sidebar-fragment"></div>
+    <div class="content flex items-center justify-center ">
+        <div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center ">
+            
+            <form th:object="${professor}" th:action="@{'/prof/update/' + ${professor.id}}" method="post"
+                class="w-full max-w-4xl mx-auto flex flex-col items-center justify-center p-8 pt-2 bg-gray-100  rounded-3xl shadow-md border-2 border-black"
+                enctype="multipart/form-data">
+                <a href="/prof" class=" text-xl text-gray-900 font-bold hover:scale-125  " style="margin-left: 740px; ">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+
+                <input type="text" hidden="hidden" th:field="*{id}" />
+
+                <span class="text-black">
+                    <p class="text-4xl font-bold mb-4 text-black">Edit Profile</p>
+
+                </span>
+
+
+                <span class="text-gray-900">
+                    <img th:if="${photo != null}" th:src="'data:image/jpeg;base64,' + ${photo}" alt="Professor Photo"
+                        class="rounded-full h-20 w-20 object-cover" />
+                </span>
+
+                <div class="mb-4 w-full flex flex-row items-center justify-between">
+                    <div class="w-1/2 flex flex-col mr-4">
+                        <label for="name" class="block text-lg font-bold text-black font-bold mb-2">Username </label>
+                        <input id="name" th:field="*{userName}" type="text" placeholder="Enter the username "
+                            class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 "
+                            oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                    </div>
+
+                    <div class="w-1/2 flex flex-col ml-4">
+                        <label for="email" class="block text-lg font-bold text-black font-bold mb-2">Email </label>
+                        <input id="email" th:field="*{email}" type="email" placeholder="Enter the email "
+                            class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                    </div>
+                </div>
+
+                <div class="mb-4 w-full flex flex-row items-center justify-between">
+                    <div class="w-1/2 flex flex-col mr-4">
+                        <label for="first"
+                            class="block text-lg font-bold text-black mb-2">Last Name </label>
+                        <input id="first" th:field="*{firstName}" type="text" placeholder="Enter the first name"
+                            class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                    </div>
+
+                    <div class="w-1/2 flex flex-col ml-4">
+                        <label for="last" class="block text-lg font-bold text-black font-bold mb-2">FirstName </label>
+                        <input id="last" th:field="*{lastName}" type="text" placeholder="Enter the last name"
+                            class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                    </div>
+                </div>
+
+                <div class="mb-4 w-full flex flex-row items-center justify-between">
+                    <div class="w-1/2 flex flex-col mr-4">
+                        <label for="grade" class="block text-lg font-bold text-black font-bold mb-2">Grade </label>
+                        <input id="grade" th:field="*{grade}" type="text" placeholder="Enter the grade"
+                            class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                    </div>
+
+                    <div class="w-1/2 flex flex-col mr-4">
+                        <label for="photo" class="block text-lg font-bold text-black font-bold mb-2 ml-4">Picture </label>
+                        <input id="photo" type="file" name="file" class="ml-4">
+                    </div>
+                </div>
+
+                
+
+                
+                    <div class="flex justify-center items-center">
+                        <button type="submit"
+                            class="bg-black text-white font-bold px-4 py-1.5 rounded-md hover:bg-white hover:text-black">Submit</button>
+                    </div>
+                    
+                
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+         body {
+            display: grid;
+            grid-template-columns: 300px 1fr; /* Diviser en deux colonnes, la première de 300px et la seconde de taille flexible */
+            min-height: 100vh;
+            overflow-x: hidden;
+            margin: 0; /* Supprimer la marge par défaut du body */
+            background-color: white;
+        
+        }
+        
+        .bg{
+            background-color: rgb(209 213 219); 
+        }
+        .sidebar {
+            width: 300px; /* Largeur de la barre latérale */
+            background-color: #333; /* Couleur de fond de la barre latér
+            ale */
+            color: white; /* Couleur du texte dans la barre latérale */
+            
+        }
+        .text-center {
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="sidebar-fragment"></div>
+    <div class="content ">
+
+        <div class="grid grid-cols-4 gap-8 w-full  ">
+            <div
+                class="relative justify-center items-center flex flex-col bg w-md rounded-lg shadow-2xl p-3  mx-2 mt-16">
+                <a th:href="@{/prof/groupe}">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-black">Total Number of Groups</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-black "
+                        th:text="${groupes}"></p>
+                </span>
+            </a>
+
+
+
+            </div>
+            <div
+                class="relative justify-center items-center flex flex-col bg rounded-lg shadow-2xl p-3  mx-2 mt-16 ">
+                <a th:href="@{/prof/etudiant}">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-black">Total Number of Groups Students</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-black "
+                        th:text="${students}"></p>
+                </span>
+            </a>
+
+
+
+            </div>
+            <div
+                class="relative justify-center items-center flex flex-col bg rounded-lg shadow-2xl p-3  mx-2 mt-16">
+                <a th:href="@{/prof/pw}">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-black">Total Number of Practical Works</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-black "
+                        th:text="${pws}"></p>
+                </span>
+            </a>
+
+
+
+            </div>
+            <div
+                class="relative justify-center items-center flex flex-col bg rounded-lg shadow-2xl p-3  mx-2 mt-16">
+                <a th:href="@{/prof/dent}">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-black">Total Number of Tooths</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-black "
+                        th:text="${dents}"></p>
+                </span>
+            </a>
+
+
+
+            </div>
+        </div>
+
+
+        <div>
+            <p align="center" class="font-bold text-5xl text-gray-900 m-16 "><u>Statistics</u></p>
+            <div id="container" style="width: 1100px; height: 600px; margin-left: 40px;" class="border-2 border-black p-8"></div>
+            <div id="ayoub" class="mt-8 border-2 border-black p-8 mb-12" style="width: 1100px; height: 600px; margin-left: 40px;" ></div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script th:inline="javascript">
+            $(function () {
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'column' // Changer le type de graphique à 'column' pour un histogramme
+                    },
+                    title: {
+                        text: '<span style="font-size:25px">Students per group</span>'
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: [[${ titles }]],
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 8,
+                        title: {
+                            text: 'nbr of students'
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:red;padding:0">nbr etudiants: </td>' +
+                            '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: { // Utiliser 'column' au lieu de 'spline' pour un histogramme
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Groupes ',
+                        data: [[${ nbrgr }]]
+                    }]
+                });
+            });
+        </script>
+        <script th:inline="javascript">
+            $(function () {
+                Highcharts.chart('ayoub', {
+                    chart: {
+                        type: 'bar' // Change the chart type to 'column' for a column chart
+                    },
+                    title: {
+                        text:  '<span style="font-size:25px">Practical works per group</span>'
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: /*[[${titles}]]*/,
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 8,
+                        title: {
+                            text: 'nombre tp'
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:red;padding:0">nbr tps: </td>' +
+                            '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: { // Use 'column' instead of 'spline' for a column chart
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Tp ',
+                        data: /*[[${nbrtp}]]*/
+                    }]
+                });
+            });
+        </script>
+
+
+
+    </div>
+
+
+</body>
+
+</html>

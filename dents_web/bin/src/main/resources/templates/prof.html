@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            min-height: 100vh;
+            overflow-x: hidden;
+
+        }
+
+
+        .content {
+            padding-left: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="sidebar-fragment"></div>
+    <div class="content">
+
+        <div class="grid grid-cols-2 gap-10 w-full ">
+            <div
+                class="relative justify-center items-center flex flex-col bg-gray-600 w-md rounded-lg shadow-2xl p-3  mx-2 mt-16">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-white">Nombre Totale Des Groupes</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-white "
+                        th:text="${groupes}"></p>
+                </span>
+
+
+
+            </div>
+            <div
+                class="relative justify-center items-center flex flex-col bg-gray-600 rounded-lg shadow-2xl p-3  mx-2 mt-16 ">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-white">Nombre Totale Des Etudians</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-white "
+                        th:text="${students}"></p>
+                </span>
+
+
+
+            </div>
+            <div
+                class="relative justify-center items-center flex flex-col bg-gray-600 rounded-lg shadow-2xl p-3  mx-2 mt-8">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-white">Nombre Totale Des Travaux Pratiques</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-white "
+                        th:text="${pws}"></p>
+                </span>
+
+
+
+            </div>
+            <div
+                class="relative justify-center items-center flex flex-col bg-gray-600 rounded-lg shadow-2xl p-3  mx-2 mt-8">
+                <span class="text-center mb-3">
+                    <p class="font-bold text-2xl text-white">Nombre Totale Des Dents</p>
+                    <p class="font-bold text-3xl mt-4 lg:text-4xl xl:text-5xl 2xl:text-6xl text-white "
+                        th:text="${dents}"></p>
+                </span>
+
+
+
+            </div>
+        </div>
+
+
+        <div>
+            <h2 align="center" class="font-bold text-4xl text-gray-900 m-16 ">Statistiques </h2>
+            <div id="container" style="width: 1100px; height: 600px; margin-left: 40px;"></div>
+            <div id="ayoub" class="mt-8" style="width: 1100px; height: 600px; margin-left: 40px;"></div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script th:inline="javascript">
+            $(function () {
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'column' // Changer le type de graphique à 'column' pour un histogramme
+                    },
+                    title: {
+                        text: 'Etudiants Par Groupe'
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: [[${ titles }]],
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 8,
+                        title: {
+                            text: 'nombre etudiants'
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:red;padding:0">Note: </td>' +
+                            '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: { // Utiliser 'column' au lieu de 'spline' pour un histogramme
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Groupes ',
+                        data: [[${ nbrgr }]]
+                    }]
+                });
+            });
+        </script>
+        <script th:inline="javascript">
+            $(function () {
+                Highcharts.chart('ayoub', {
+                    chart: {
+                        type: 'bar' // Change the chart type to 'column' for a column chart
+                    },
+                    title: {
+                        text: 'Tp Par Groupe'
+                    },
+                    subtitle: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: /*[[${titles}]]*/,
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        max: 8,
+                        title: {
+                            text: 'nombre tp'
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:red;padding:0">Note: </td>' +
+                            '<td style="padding:0"><b>{point.y:.2f}</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: { // Use 'column' instead of 'spline' for a column chart
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Tp ',
+                        data: /*[[${nbrtp}]]*/
+                    }]
+                });
+            });
+        </script>
+
+
+
+    </div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: url('https://www.creativefabrica.com/wp-content/uploads/2022/09/17/Tooth-Silhouette-Vector-Graphics-38702993-1-1-580x387.jpg');
+      background-size: cover; 
+      background-position: center; 
+      background-repeat: no-repeat;
+    }
+    
+    .error-message {
+      background-color: #f44336; /* Couleur de fond rouge */
+      color: white; /* Couleur du texte blanc */
+      padding: 10px 20px; /* Espacement intérieur */
+      border-radius: 5px; /* Coins arrondis */
+      text-align: center; /* Centrage du texte */
+    }
+  </style>
+</head>
+<body>
+  <section>
+    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div class="w-full bg-gray-100 rounded-3xl shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
+        <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+          <form class="space-y-4 md:space-y-6" method="post" role="form" th:action="@{/login}">
+            <div>
+              <label for="email" class="block mb-2 text-xl font-bold text-gray-900">Username</label>
+              <input type="text" name="username" id="email" class="border border-gray-300 text-gray-900 sm:text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Username" required="">
+            </div>
+            <div>
+              <label for="password" class="block mb-2 text-xl font-bold text-gray-900">Password</label>
+              <div class="relative">
+                <input type="password" name="password" id="password" placeholder="password" class="border border-gray-300 text-gray-900 sm:text-lg rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+                <span id="togglePassword" class="absolute top-1/2 right-4 transform -translate-y-1/2 cursor-pointer">
+                  <img src="data:image/png;base64,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" class="h-6 w-6" id="hideIcon">
+                  <img  src="data:image/png;base64,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" class="h-6 w-6 hidden" id="showIcon">
+                  
+                  <!-- <svg id="hideIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a9 9 0 016.33 3.75M9 14a9 9 0 0011.03.42"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l22 22M1 23L23 1"/>
+                  </svg> -->
+                  <!-- <svg id="showIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10a9 9 0 016.33 3.75M9 14a9 9 0 0011.03.42"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1l22 22M1 23L23 1"/>
+                  </svg> -->
+                  
+
+                  
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-start">
+                <div class="flex items-center h-5">
+                  <input id="remember" aria-describedby="remember" type="checkbox" class="w-6 h-6 mt-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800">
+                </div>
+                <div class="ml-3 text-sm">
+                  <label for="remember" class="text-lg text-gray-900">Remember me</label>
+                </div>
+              </div>
+              <a th:href="@{/password-request}" class="text-lg font-bold text-gray-900 hover:underline">Forgot password?</a>
+            </div>
+            <button type="submit" class="w-full text-white bg-gray-900 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-lg px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Sign in</button>
+            <div th:if="${param.error}" class="error-message">
+              <p>Username or Password incorrect</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const password = document.getElementById('password');
+    const hideIcon = document.getElementById('hideIcon');
+    const showIcon = document.getElementById('showIcon');
+
+    togglePassword.addEventListener('click', function () {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      hideIcon.classList.toggle('hidden');
+      showIcon.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

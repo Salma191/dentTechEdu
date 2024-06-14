@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Gestion Des Travaux Pratiques</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+	<style>
+		body {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			min-height: 100vh;
+			overflow-x: hidden;
+			background-color: white;
+		}
+
+
+		.image-info-container {
+			display: flex;
+
+			margin-bottom: 10px;
+		}
+
+		.image-info-container img {
+			width: 240px;
+			/* Taille des images */
+			height: 180px;
+			border-radius: 20px;
+			/* Bord arrondi */
+		}
+
+		.button-container {
+			display: flex;
+			/* Utilisation de Flexbox */
+			justify-content: space-between;
+			/* Espace égal entre les boutons */
+		}
+
+		.bg {
+			background-color: rgb(209 213 219);
+		}
+
+
+		.content {
+			padding-left: 40px;
+		}
+
+		.text-center {
+            overflow-wrap: anywhere;
+        }
+				.pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pagination .page-item {
+            margin: 0 2px;
+        }
+
+        .pagination .page-link {
+            color: #000;
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+            transition: background-color 0.3s;
+        }
+
+        .pagination .page-link:hover {
+            background-color: #080808;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            cursor: default;
+            background-color: #fff;
+            border-color: #ccc;
+        }
+	</style>
+	
+</head>
+
+
+
+	<div th:replace="sidebar-fragment"></div>
+	<div class="content">
+		<div th:switch="${studentPWs}" class="relative flex flex-col w-11/12 p-5 m-10 justify-center items-center">
+			<form th:action="@{/prof/getetudiants}" method="get" id="myForm">
+				<select  name="id" required
+					class="absolute top-1 left-5   text-lg px-3 py-1.5 rounded font-bold text-black bg" style="width: 190px;"
+					onchange="submitForm()">
+					<option value="">Choose groupe</option>
+					<option th:each="groupe : ${groupes}" th:value="${groupe.id}"
+						th:text="|${groupe.code} ${groupe.year}|" class="text-black">
+					</option>
+				</select>
+			</form>
+			<form th:action="@{/prof/gettpetudiants}" method="get" id="myformf">
+				<select required name="idd"
+					class="absolute top-1 right-5 text-lg px-3 py-1.5 rounded font-bold text-black bg"
+					onchange="submitFormf()">
+					<option value="">Choose student</option>
+					<option th:each="student : ${students}" th:value="${student.id}"
+						th:text="|${student.firstName} ${student.lastName}|" class="text-black"></option>
+
+				</select>
+			</form>
+			<h2 th:case="null" th:text="${msg}"  class="text-4xl font-bold my-4 mt-40">No assignments completed yet</h2>
+			<div th:case="*" class="w-full text-center">
+				<h2 class="text-2xl font-bold my-8 w-full py-2 bg rounded-lg text-black shadow-2xl">List of Completed Assignments</h2>
+				<div class="grid grid-cols-3 gap-3 w-full">
+					<div th:each="studentpw,stat : ${studentPWs}"
+						class="relative justify-center items-center flex flex-col bg rounded-lg shadow-2xl p-3 mb-4 mx-2">
+
+						<span class="text-center mb-3">
+							<p th:text="|${studentpw.pw.title}|" class="text-2xl font-bold  text-black "></p>
+							<p th:text="|Student  :  ${studentpw.student.firstName} ${studentpw.student.lastName}|"
+								class="text-lg  text-black"></p>
+
+							<p th:text="|Group  :  ${studentpw.student.groupe.code}|" class="text-lg  text-black "></p>
+
+							<p th:text="|Date : ${studentpw.date}|" class="text-lg  text-black"></p>
+							<p th:text="|Note : ${studentpw.note}|" class="text-lg text-black"></p>
+							<p th:text="|Remark : ${studentpw.remarque}|" class="text-lg text-black"></p>
+
+						</span>
+
+						
+						<div class="button-container">
+							<button type="button">
+								<a th:href="@{/prof/valider/{studentId}/{pwId}(studentId=${studentpw.id.student_id}, pwId=${studentpw.id.pw_id})}"
+									class="flex items-center">
+									<span
+										class="bg-black text-white font-bold px-4 py-1.5 rounded-md mr-4  hover:bg-white hover:text-black ">Validate</span>
+								</a>
+							</button>
+							<button type="button">
+								<a th:href="@{/prof/voir/{studentId}/{pwId}(studentId=${studentpw.id.student_id}, pwId=${studentpw.id.pw_id})}"
+									class="flex items-center">
+									<span
+										class="bg-black text-white font-bold px-4 py-1.5 rounded-md mr-4  hover:bg-white hover:text-black">View
+										Pw</span>
+								</a>
+							</button>
+						</div>
+
+					</div>
+				</div>
+				
+			</div>
+			<div th:switch="${type}">
+			<div th:case="a" class="mt-8 flex justify-center items-center">
+				<ul class="pagination">
+						<li th:class="${professorPage.first ? 'disabled' : ''}" class="page-item">
+								<a th:href="@{/prof/studentpw?page=0}" class="page-link">&laquo;</a>
+						</li>
+						<li th:each="i : ${#numbers.sequence(0, professorPage.totalPages - 1)}"
+								th:class="${professorPage.number == i ? 'active' : ''}" class="page-item">
+								<a th:href="@{/prof/studentpw?page=__${i}__}" class="page-link" th:text="${i + 1}"></a>
+						</li>
+						<li th:class="${professorPage.last ? 'disabled' : ''}" class="page-item">
+								<a th:href="@{/prof/studentpw?page=__${professorPage.totalPages - 1}__}"
+										class="page-link">&raquo;</a>
+						</li>
+				</ul>
+		</div>
+		<div th:case="b" class="mt-8 flex justify-center items-center">
+			<ul class="pagination">
+					<li th:class="${professorPage.first ? 'disabled' : ''}" class="page-item">
+							<a th:href="@{/prof/getetudiants?(id=${id},page=0)}" class="page-link">&laquo;</a>
+					</li>
+					<li th:each="i : ${#numbers.sequence(0, professorPage.totalPages - 1)}"
+							th:class="${professorPage.number == i ? 'active' : ''}" class="page-item">
+							<a th:href="@{/prof/getetudiants?(id=${id},page=__${i}__)}" class="page-link" th:text="${i + 1}"></a>
+					</li>
+					<li th:class="${professorPage.last ? 'disabled' : ''}" class="page-item">
+							<a th:href="@{/prof/getetudiants?(id=${id},page=__${professorPage.totalPages - 1}__)}"
+									class="page-link">&raquo;</a>
+					</li>
+			</ul>
+	</div>
+	<div th:case="c" class="mt-8 flex justify-center items-center">
+		<ul class="pagination">
+				<li th:class="${professorPage.first ? 'disabled' : ''}" class="page-item">
+						<a th:href="@{/prof/gettpetudiants?(idd=${idd},page=0)}" class="page-link">&laquo;</a>
+				</li>
+				<li th:each="i : ${#numbers.sequence(0, professorPage.totalPages - 1)}"
+						th:class="${professorPage.number == i ? 'active' : ''}" class="page-item">
+						<a th:href="@{/prof/gettpetudiants?(idd=${idd},page=__${i}__)}" class="page-link" th:text="${i + 1}"></a>
+				</li>
+				<li th:class="${professorPage.last ? 'disabled' : ''}" class="page-item">
+						<a th:href="@{/prof/gettpetudiants?(idd=${id},page=__${professorPage.totalPages - 1}__)}"
+								class="page-link">&raquo;</a>
+				</li>
+		</ul>
+</div>
+	</div>
+		</div>
+		<div th:if="${mode eq 'valider'}"
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+			<div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center">
+				
+				<form th:action="@{/prof/validerremarque/{id1}/{id2}(id1=${studentId}, id2=${pwId})}" method="post"
+					class="w-full max-w-sm mx-auto flex flex-col items-center justify-center p-8 pt-2 bg-gray-100 rounded-3xl shadow-md border-2 border-black justify-center items-center">
+					<a href="/prof/studentpw" class=" text-xl text-gray-900 font-bold hover:scale-125  " style="margin-left: 330px; ">
+						<i class="bi bi-x-lg"></i>
+				</a>
+
+
+
+
+					<p class="text-3xl font-bold mb-4 text-black">Validate PW</p>
+
+
+					<div class="w-4/5 flex flex-col my-4">
+						
+						<textarea id="name" type="text" placeholder="Enter remark"
+							class="rounded text-sm py-2 px-4 my-2 w-full  border-2 border-black w-36 h-20   focus:outline-none focus:ring  "
+							name="remarque"></textarea>
+					</div>
+
+
+					<div class="flex justify-center items-center">
+						<button type="submit"
+							class="bg-black text-white hover:bg-white hover:text-black  font-bold px-4 py-1.5 rounded-md ">Submit</button>
+					</div>
+
+
+				</form>
+			</div>
+		</div>
+		<div id="contentToPrint" th:if="${mode eq 'voir'}"
+			class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+			<div class="relative  w-2/3 flex flex-col items-center justify-center" style="height: 650px;">
+				
+				<div class="  p-2 bg-white rounded-lg shadow-md border-2 border-black justify-center items-center overflow-y-auto " style="width: 700px;"
+					th:object="${spww}">
+					<a href="/prof/studentpw" class=" fixed text-xl text-gray-900 font-bold hover:scale-125  " style="margin-left: 640px; ">
+						<i class="bi bi-x-lg"></i>
+				</a>
+
+
+					<div class="flex-container ">
+						<p th:text="|Report of ${spww.pw.title}|" class="font-bold text-3xl text-center border-2 border-black  p-2 mr-20 ml-20 mt-8"></p>
+						<p th:text="| First Name    : ${spww.student.firstName}|" class=" text-xl    mr-20 ml-20 mt-8"></p>
+						<p th:text="| Last Name     : ${spww.student.lastName}|" class="  text-xl     mr-20 ml-20 mt-2"></p>
+						<p th:text="| Groupe        : ${spww.student.groupe.code}|" class="  text-xl     mr-20 ml-20 mt-2"></p>
+						<p th:text="| Professor     : ${spww.student.groupe.professor.firstName} ${spww.student.groupe.professor.lastName}|" class="  text-xl    mr-20 ml-20 mt-2"></p>
+						
+						<p th:text="| Tooth         : ${spww.pw.tooth.name}|" class="  text-xl    mr-20 ml-20 mt-6"></p>
+						<p th:text="| Preparation   : ${spww.pw.preparation.type} |" class="  text-xl     mr-20 ml-20 mt-2"></p>
+						
+						<p th:text="| Objective     : ${spww.pw.objectif}|" class=" text-xl     mr-20 ml-20 mt-2"></p>
+					
+						<p class="font-bold  text-2xl    mr-20 ml-20 mt-8">I. Internal Angles :</p>
+						
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">1. Measurements :</p>
+						<img th:if="${p1 != null}" th:src="'data:image/jpeg;base64,' + ${p1}" alt="Tp Photo" class="items-center mt-6 mr-10 ml-60 " style="width: 200px; height: 200px;" />
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">2. Results :</p>
+						<p th:text="|Using The Mobile App ,the following measurements were found (${spww.internes}) degree.|" class="  text-md  mr-10 ml-20 mt-2"></p>
+
+						<p class="font-bold  text-2xl    mr-20 ml-20 mt-8">II. External Angles :</p>
+						
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">1. Measurements :</p>
+						<img th:if="${p2 != null}" th:src="'data:image/jpeg;base64,' + ${p2}" alt="Tp Photo" class="items-center mt-6 mr-10 ml-60 " style="width: 200px; height: 200px;"  />
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">2. Results :</p>
+						<p th:text="|Using The Mobile App ,the following measurements were found (${spww.externes}) degree.|" class="  text-md  mr-10 ml-20 mt-2"></p>
+						<p class="font-bold  text-2xl    mr-20 ml-20 mt-8">III. External Angles :</p>
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">1. Measurements :</p>
+						<img th:if="${p3 != null}" th:src="'data:image/jpeg;base64,' + ${p3}" alt="Tp Photo" class="items-center mt-6 mr-10 ml-60 " style="width: 200px; height: 200px;"  />
+						<p class="font-medium  text-xl    mr-20 ml-20 mt-4">2. Results :</p>
+						<p th:text="|Using The Mobile App ,the following measurements were found (${spww.depouilles}) degree.|" class="  text-md  mr-10 ml-20 mt-2 mb-10"></p>
+						<button id="downloadBtn" class="bg-black text-xl font-bold text-white items-center hover:bg-white hover:text-black px-4 py-1.5 rounded-md justify-center ml-60 mb-10">Download PDF</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+	<body>
+	
+		<script>
+			function submitForm() {
+				document.getElementById('myForm').submit();
+			}
+		
+			function submitFormf() {
+				document.getElementById('myformf').submit();
+			}
+			document.getElementById('downloadBtn').addEventListener('click', function() {
+				var content = document.getElementById('contentToPrint').innerHTML;
+				var printWindow = window.open('', '', 'width=800,height=600');
+				printWindow.document.open();
+				// Ajoutez le lien vers Tailwind CSS dans la section head du document
+				printWindow.document.write('<html><head><title>Imprimer</title><link rel="stylesheet" href="https://cdn.tailwindcss.com"></head><body>');
+				printWindow.document.write(content);
+				printWindow.document.write('</body></html>');
+				printWindow.document.close();
+				printWindow.print();
+			});
+		</script>
+		
+</body>
+
+</html>

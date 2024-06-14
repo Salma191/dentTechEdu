@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            min-height: 100vh;
+            overflow-x: hidden;
+
+        }
+
+
+        .content {
+            padding-left: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="sidebar-fragment"></div>
+
+    <div class="content">
+        <div th:switch="${students}" class="relative flex flex-col w-11/12 p-5 m-10 justify-center items-center">
+            <a th:href="@{/prof/adde}"
+                class="absolute top-1 left-5 px-2 py-1 rounded font-semibold text-white bg-gray-900 hover:bg-gray-500">
+                <i class="bi bi-plus-circle mr-2 text-lg"></i>Ajouter Un Etudiant
+            </a>
+            <form th:action="@{/prof/studentByGroupe}" method="get" id="myForm">
+                <select th name="groupe" required
+                    class="absolute top-1 right-5 px-3 py-1.5 rounded font-semibold text-white bg-gray-900 hover:bg-gray-500"
+                    onchange="submitForm()">
+                    <option value="">Choisir un groupe</option>
+                    <option th:each="groupe : ${groupes}" th:value="${groupe.id}"
+                        th:text="|${groupe.code} ${groupe.year}|"></option>
+                </select>
+            </form>
+            <h2 th:case="null" class="text-xl font-semibold my-4">Pas De Etudiants Pour Le Moment</h2>
+            <div th:case="*" class="w-full text-center">
+                <h2 class="text-2xl font-semibold my-8 w-full py-2 bg-gray-900 rounded-lg text-white shadow-2xl">La
+                    Liste Des Etudiant</h2>
+                <div class="grid grid-cols-3 gap-3 w-full">
+                    <div th:each="student,stat : ${students}"
+                        class="relative justify-center items-center flex flex-col bg-gray-600 rounded-lg shadow-2xl p-3 mb-4 mx-2">
+                        <span class="px-6 pt-6 pb-3 mb-2 w-2/3"
+                            style="width: 200px; height: 200px; display: block; overflow: hidden;">
+                            <img th:if="${encodedPhotos != null && encodedPhotos[stat.index] != null && encodedPhotos[stat.index] != ''}"
+                                th:src="'data:image/jpeg;base64,' + ${encodedPhotos[stat.index]}" alt="Professor Photo"
+                                class="hover:scale-125 w-full h-full" style="object-fit: cover;" />
+                        </span>
+
+
+                        <span class="text-center mb-3">
+                            <p th:text="|${student.firstName} ${student.lastName}|"
+                                class="font-bold text-2xl text-white"></p>
+                            <p th:text="${student.email}" class="text-lg text-white"></p>
+                            <p th:text="|Num :${student.number}|" class="text-lg text-white"></p>
+                            <p th:text="|Groupe :${student.groupe.code}|" class="text-lg text-white font-bold"></p>
+                        </span>
+                        <a href="#" th:onclick="'showDeleteConfirmation(' + ${student.id} + ')'" class="mt-2">
+                            <i
+                                class="bi bi-trash-fill absolute bottom-1 right-2 text-lg text-red-500 hover:text-red-300 hover:scale-125"></i>
+                        </a>
+                        <a th:href="@{/prof/edite/{id}(id=${student.id})}" class="mt-2">
+                            <i
+                                class="bi bi-pencil-square absolute bottom-1 left-2 text-lg text-green-500 hover:text-green-300 hover:scale-125"></i>
+                        </a>
+                        <form th:action="@{/prof/gettpstudent}" method="get" id="myformf">
+                            <input hidden type="text" name="id" th:value="${student.id}">
+                            <button type="submit"> <a th:href="@{#}" class="mt-2">
+                                    <i
+                                        class="bi bi-info-circle absolute bottom-1 justify-center text-lg text-blue-500 hover:text-blue-300 hover:scale-125"></i>
+                                </a></button>
+                        </form>
+
+
+                        <div id="deleteConfirmationPopup"
+                            class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm hidden">
+                            <div class="bg-white p-8 rounded-lg shadow-md">
+                                <p class="text-xl font-semibold mb-4">Etes Vous sur de vouloir supprimer ce etudiant ?
+                                </p>
+                                <div class="flex justify-between items-center">
+                                    <button id="confirmButton"
+                                        class="bg-red-500 text-white font-medium px-4 py-1.5 rounded-md mr-4"
+                                        data-professor-id="" onclick="confirmDelete()">Confirmer</button>
+                                    <button onclick="cancelDelete()"
+                                        class="text-gray-500 hover:text-gray-700">Annuler</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div th:if="${mode eq 'add' or mode eq 'update'}"
+            class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+            <div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center">
+                <form th:action="${mode eq 'add' ? '/prof/addetudiant' : '/prof/updateetudiant/' + student.id}"
+                    th:object="${student}" method="post"
+                    class="w-full max-w-2xl mx-auto flex flex-col items-center justify-center p-8 bg-white rounded-lg shadow-md border-4 border-black"
+                    enctype="multipart/form-data">
+
+                    <input type="text" hidden="hidden" th:field="*{id}" />
+
+                    <span th:switch="${mode}" class="text-gray-900">
+                        <p th:case="'add'" class="text-xl font-bold mb-4">Ajouter Un Etudiant</p>
+                        <p th:case="'update'" class="text-xl font-bold mb-4">Modifier Un Etudiant</p>
+                    </span>
+
+                    <span th:switch="${mode}" class="text-violet-600">
+                        <img th:case="'update'" th:if="${encodedPhoto != null}"
+                            th:src="'data:image/jpeg;base64,' + ${encodedPhoto}" alt="Professor Photo"
+                            class="rounded-full h-16 w-16 object-cover" />
+                    </span>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="name" class="block text-lg font-medium text-gray-900 font-bold mb-2">Nom
+                                D'utilsateur</label>
+                            <input id="name" th:field="*{userName}" type="text"
+                                placeholder="Entrez le nom d'utilisateur "
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="email"
+                                class="block text-lg font-medium text-gray-900 font-bold mb-2">Email:</label>
+                            <input id="email" th:field="*{email}" type="email" placeholder="Entrez l'email "
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="first"
+                                class="block text-lg font-medium text-gray-900 font-bold mb-2">Prenom:</label>
+                            <input id="first" th:field="*{firstName}" type="text" placeholder="Entrez le prenom"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="last"
+                                class="block text-lg font-medium text-gray-900 font-bold mb-2">Nom:</label>
+                            <input id="last" th:field="*{lastName}" type="text" placeholder="Entez le nom"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="Numero"
+                                class="block text-lg font-medium text-gray-900 font-bold mb-2">Numero:</label>
+                            <input id="Numero" th:field="*{number}" type="text" placeholder="Entrez le Numero"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="pass" class="block text-lg font-medium text-gray-900 font-bold mb-2">Mot de
+                                Passe:</label>
+                            <input id="pass" th:field="*{password}" type="password" placeholder="Entrez le mot de passe"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between mx-auto">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="photo"
+                                class="block text-lg font-medium text-gray-900 font-bold mb-2">Photo:</label>
+                            <input id="photo" type="file" name="file" required>
+                        </div>
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <span th:switch="${mode}" class="text-violet-600">
+                                <select th:case="'add'" th:field="*{groupe}"
+                                    class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ml-2">
+                                    <option value="">Choisir groupe</option>
+                                    <option th:each="groupe : ${groupes}" th:value="${groupe.id}"
+                                        th:text="|${groupe.code} ${groupe.year}|"></option>
+                                </select>
+                                <select th:case="'update'" name="groupe" required
+                                    class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ml-2">
+                                    <option value="">Choisir groupe</option>
+                                    <option th:each="groupe : ${groupes}" th:value="${groupe.id}"
+                                        th:text="|${groupe.code} ${groupe.year}|"></option>
+                                </select>
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <span class="w-full flex justify-between items-center mt-4">
+                        <div class="flex justify-center items-center">
+                            <button type="submit"
+                                class="bg-black text-white font-medium px-4 py-1.5 rounded-md hover:bg-white hover:text-black">Soumettre</button>
+                        </div>
+                        <a href="/prof/etudiant" class="text-gray-900 ">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    </span>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        function submitForm() {
+            document.getElementById('myForm').submit();
+        }
+
+        function showDeleteConfirmation(professorId) {
+            const confirmationPopup = document.getElementById('deleteConfirmationPopup');
+            confirmationPopup.style.display = 'flex';
+
+            // Set the professorId as a data attribute in the Confirm button
+            const confirmButton = document.getElementById('confirmButton');
+            confirmButton.setAttribute('data-professor-id', professorId);
+        }
+
+        function cancelDelete() {
+            const confirmationPopup = document.getElementById('deleteConfirmationPopup');
+            confirmationPopup.style.display = 'none';
+        }
+
+        function confirmDelete() {
+            // Get the professorId from the Confirm button data attribute
+            const confirmButton = document.getElementById('confirmButton');
+            const professorId = confirmButton.getAttribute('data-professor-id');
+
+            // Execute the delete action or make an API call
+            // You can replace the following line with your actual API call
+            window.location.href = '/prof/deleteetudiant/' + professorId;
+
+            // Hide the confirmation popup after confirmation
+            const confirmationPopup = document.getElementById('deleteConfirmationPopup');
+            confirmationPopup.style.display = 'none';
+        }
+    </script>
+
+</body>
+
+
+</body>
+
+</html>

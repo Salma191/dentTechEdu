@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        /* .bg{
+            background-color: #b9b9b9;  
+        } */
+        .pagination {
+        display: flex;
+        list-style: none;
+        padding: 0;
+    }
+    .text-center {
+            overflow-wrap: anywhere;
+        }
+
+    .pagination .page-item {
+        margin: 0 2px;
+    }
+
+    .pagination .page-link {
+        color: #000;
+        text-decoration: none;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 0.25rem;
+        transition: background-color 0.3s;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #cac8c8;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        pointer-events: none;
+        cursor: default;
+        background-color: #fff;
+        border-color: #ccc;
+    }
+    </style>
+</head>
+
+<body class="font-[Poppins] flex w-full justify-center items-center  mt-10  ">
+    <div class="navbar fixed top-0 w-full flex justify-between items-center bg-gray-300 p-4 z-10 ">
+
+        <div class="navbar__admin flex items-center ">
+            <div ><img th:if="${photo1 != null}" th:src="'data:image/jpeg;base64,' + ${photo1}" alt="Professor Photo"
+                class="w-12 h-12 ml-4 mr-4  rounded-full "></div>
+            <a th:href="@{#}" class="admin-name hover:scale-105  text-black font-bold text-lg" name="username" th:text="${userdetail.username}"></a>
+        </div>
+
+        <div class="navbar__logout flex items-center">
+            <div class="logout-icon text-2xl text-black ">&#x1F6AA;</div>
+            <a th:href="@{/logout}" class="logout-link hover:scale-125 text-black text-lg font-bold mr-4 ml-4">Logout</a>
+        </div>
+    </div>
+
+    <div th:switch="${professors}" class="relative flex flex-col w-11/12 p-5 m-16 justify-center items-center">
+        <a th:href="@{/admin/add}"
+            class="absolute top-1 left-5 px-2 py-1 rounded font-bold text-black bg-gray-300 border-2 hover:bg-gray-500 ">
+            <i class="bi bi-plus-circle mr-2 text-lg "></i>Add a teacher
+        </a>
+
+        <form th:action="@{/admin/searchByNom}" method="get" class=" absolute top-1 right-5 px-3 py-0 mb-2 rounded">   
+            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+            <div class="relative mb-2">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="search" id="default-search" style="width: 350px;" class="block  h-10   p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-100 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search By Last Or First Name" name="a" value="" />
+                <button type="submit" class="text-black absolute end-0 bottom-0.5  hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-gray-300 font-bold rounded-lg text-sm px-4 py-2 bg-gray-300 hover:bg-gray-500 dark:focus:ring-blue-800 " >Search</button>
+            </div>
+        </form>
+
+
+
+
+        <h2 th:case="null" th:text="${msg}" class="text-4xl font-bold my-4 mt-40">No teachers with this Last Or First Name</h2>
+        <div th:case="*" class="w-full text-center">
+            <h2 class=" text-2xl font-bold my-8 w-full py-2 bg-gray-300 rounded-lg text-black shadow-2xl  ">The List of Teachers</h2>
+           
+            <div class="grid grid-cols-4 gap-10 w-full ">
+                <div th:each="professor,stat : ${professors}"
+                    class="relative justify-center items-center flex flex-col bg-gray-300  rounded-3xl shadow-2xl p-3 mb-4 mx-2 ">
+                    <span class=" pt-1 pb-1 mb-2 w-2/3 "
+                        style="width: 200px; height: 200px; display: block; overflow: hidden; ">
+                        <img th:if="${encodedPhotos != null && encodedPhotos[stat.index] != null && encodedPhotos[stat.index] != ''}"
+                            th:src="'data:image/jpeg;base64,' + ${encodedPhotos[stat.index]}" alt="Professor Photo"
+                            class="hover:scale-105 w-full h-full rounded-full " style="object-fit: cover;" />
+                    </span>
+                    <span class="text-center mb-3">
+                        <p th:text="|${professor.firstName} ${professor.lastName}|"
+                            class="font-bold text-lg text-black text-center"></p>
+                        <p th:text="${professor.email}" class="text-sm text-black mt-2 text-center"></p>
+                        <p th:text="|Grade : ${professor.grade}|" class="text-sm text-black mt-2 mb-4 text-center"></p>
+                    </span>
+                    <a href="#" th:onclick="'showDeleteConfirmation(' + ${professor.id} + ')'">
+                        <i
+                            class="bi bi-trash-fill absolute bottom-1 right-2 text-lg text-red-700 hover:text-red-500 hover:scale-125 " ></i>
+                    </a>
+                    <a th:href="@{/admin/edit/{id}(id=${professor.id})}">
+                        <i
+                            class="bi bi-pencil-square absolute bottom-1 left-2 text-lg text-green-700 hover:text-green-500 hover:scale-125 "></i>
+                    </a>
+
+                    <div id="deleteConfirmationPopup"
+                        class="fixed top-0 left-0 w-full h-full flex items-center justify-center  z-50 backdrop-blur-sm hidden">
+                        <div class="bg-gray-300 p-8 rounded-lg shadow-md border-2 border-black">
+                            <p class="text-xl text-black font-bold mb-4">Are you sure you want to delete this teacher?</p>
+                            <div class="flex justify-between items-center">
+                                <button id="confirmButton"
+                                    class="bg-green-500 text-black  font-bold px-4 py-1.5 rounded-md mr-4"
+                                    data-professor-id="" onclick="confirmDelete()">Confirm</button>
+                                <button onclick="cancelDelete()"
+                                    class="bg-gray-900 text-white font-medium px-4 py-1.5 rounded-md mr-4">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 flex justify-center items-center">
+                <ul class="pagination">
+                    <li th:class="${professorPage.first ? 'disabled' : ''}" class="page-item">
+                        <a th:href="@{/admin?page=0}" class="page-link">&laquo;</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, professorPage.totalPages - 1)}"
+                        th:class="${professorPage.number == i ? 'active' : ''}" class="page-item">
+                        <a th:href="@{/admin?page=__${i}__}" class="page-link" th:text="${i + 1}"></a>
+                    </li>
+                    <li th:class="${professorPage.last ? 'disabled' : ''}" class="page-item">
+                        <a th:href="@{/admin?page=__${professorPage.totalPages - 1}__}" class="page-link">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+
+        <div th:if="${mode eq 'add' or mode eq 'update'}"
+            class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+            <div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center ">
+                
+                
+
+                <form th:action="${mode eq 'add' ? '/admin/addProf' : '/admin/update/' + professor.id}"
+                    th:object="${professor}" method="post"
+                    class="w-full max-w-2xl mx-auto flex flex-col items-center justify-center p-8 pt-2 bg-gray-100 rounded-3xl shadow-md border-2 border-black   mt-0"
+                    enctype="multipart/form-data">
+                    <a href="/admin" class=" text-xl text-gray-900 font-bold hover:scale-125  " style="margin-left: 600px; ">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                    
+                    
+
+                    <input type="text" hidden="hidden" th:field="*{id}" />
+
+                    <span th:switch="${mode}" class="text-black">
+                        <p th:case="'add'" class="text-3xl font-bold mb-4">Add Teacher</p>
+                        <p th:case="'update'" class="text-3xl font-bold mb-4">Edit Teacher</p>
+                    </span>
+                    <span th:switch="${mode}" class="text-violet-600">
+                        <img th:case="'update'" th:if="${encodedPhoto != null}"
+                            th:src="'data:image/jpeg;base64,' + ${encodedPhoto}" alt="Professor Photo"
+                            class="rounded-full h-20 w-20 object-cover" />
+                    </span>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="name" class="block text-lg font-bold text-black font-bold mb-2">Username</label>
+                            <input id="name" th:field="*{userName}" type="text"
+       placeholder="Enter the username "
+       class="rounded text-sm py-2 px-4 my-2 w-full border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 "
+       oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="email"
+                                class="block text-lg font-bold text-black mb-2">Email</label>
+                            <input id="email" th:field="*{email}" type="email" placeholder="Enter the email "
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="first"
+                                class="block text-lg font-bold text-black mb-2">Last Name</label>
+                            <input id="first" th:field="*{lastName}" type="text" placeholder="Enter the last name"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="last"
+                                class="block text-lg font-bold text-black mb-2">First Name</label>
+                            <input id="last" th:field="*{firstName}" type="text" placeholder="Enter the first name"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                        </div>
+                    </div>
+
+                    <div  class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="grade"
+                                class="block text-lg font-bold text-black mb-2">Grade</label>
+                            <input id="grade" th:field="*{grade}" type="text" placeholder="Enter the grade"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                        
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="photo"
+                                class="block ml-4 text-lg font-bold text-black mb-2">Picture</label>
+                            <input  id="photo" type="file" class="text-lg py-2 px-4 my-2 w-full" name="file"  >
+                        </div>
+                        
+                        </div>
+                    
+
+                    <div th:switch="${mode}" class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div   th:case="'add'" class="w-1/2 flex flex-col mr-4">
+                            <label for="pass" class="block text-lg font-bold text-black mb-2">Password</label>
+                            <input id="pass" th:field="*{password}" type="password" placeholder="Enter the password"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " style="width: 290px;">
+                        </div>
+                    </div>
+
+
+                    
+                        <div class="flex justify-center items-center">
+                            <button type="submit" class="bg-gray-900 text-white font-bold px-4 py-1.5 ml-26 rounded-md hover:bg-white hover:text-black">Submit</button>
+                        </div>
+                        
+                        <!-- <a href="/admin" class="text-gray-900 ">
+                            <i class="bi bi-x-lg"></i>
+                        </a> -->
+                    
+                </form>
+            </div>
+        </div>
+
+
+
+
+        <div th:if="${mode eq 'admine' }"
+            class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50 backdrop-blur-sm">
+            <div class="relative h-3/5 w-2/3 flex flex-col items-center justify-center ">
+                
+                
+
+                <form th:action="${/admin/addAddmin}"
+                    th:object="${professor}" method="post"
+                    class="w-full max-w-2xl mx-auto flex flex-col items-center justify-center p-8 pt-2 bg-gray-100 rounded-3xl shadow-md border-2 border-black   mt-0"
+                    enctype="multipart/form-data">
+                    <a href="/admin" class=" text-xl text-gray-900 font-bold hover:scale-125  " style="margin-left: 600px; ">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                    
+                    
+
+                    <input type="text" hidden="hidden" th:field="*{id}" />
+
+                    <span th:switch="${mode}" class="text-black">
+                        <p th:case="'add'" class="text-3xl font-bold mb-4">Add Teacher</p>
+                        <p th:case="'update'" class="text-3xl font-bold mb-4">Edit Teacher</p>
+                    </span>
+                    <span th:switch="${mode}" class="text-violet-600">
+                        <img th:case="'update'" th:if="${encodedPhoto != null}"
+                            th:src="'data:image/jpeg;base64,' + ${encodedPhoto}" alt="Professor Photo"
+                            class="rounded-full h-20 w-20 object-cover" />
+                    </span>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="name" class="block text-lg font-bold text-black font-bold mb-2">Username</label>
+                            <input id="name" th:field="*{userName}" type="text"
+       placeholder="Enter the username "
+       class="rounded text-sm py-2 px-4 my-2 w-full border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 "
+       oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="email"
+                                class="block text-lg font-bold text-black mb-2">Email</label>
+                            <input id="email" th:field="*{email}" type="email" placeholder="Enter the email "
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                    </div>
+
+                    <div class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="first"
+                                class="block text-lg font-bold text-black mb-2">Last Name</label>
+                            <input id="first" th:field="*{lastName}" type="text" placeholder="Enter the last name"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                        </div>
+
+                        <div class="w-1/2 flex flex-col ml-4">
+                            <label for="last"
+                                class="block text-lg font-bold text-black mb-2">First Name</label>
+                            <input id="last" th:field="*{firstName}" type="text" placeholder="Enter the first name"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " oninput="this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);">
+                        </div>
+                    </div>
+
+                    <div  class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="grade"
+                                class="block text-lg font-bold text-black mb-2">Grade</label>
+                            <input id="grade" th:field="*{grade}" type="text" placeholder="Enter the grade"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 ">
+                        </div>
+                        
+                        <div class="w-1/2 flex flex-col mr-4">
+                            <label for="photo"
+                                class="block ml-4 text-lg font-bold text-black mb-2">Picture</label>
+                            <input  id="photo" type="file" class="text-lg py-2 px-4 my-2 w-full" name="file"  >
+                        </div>
+                        
+                        </div>
+                    
+
+                    <div th:switch="${mode}" class="mb-4 w-full flex flex-row items-center justify-between">
+                        <div   th:case="'add'" class="w-1/2 flex flex-col mr-4">
+                            <label for="pass" class="block text-lg font-bold text-black mb-2">Password</label>
+                            <input id="pass" th:field="*{password}" type="password" placeholder="Enter the password"
+                                class="rounded text-sm py-2 px-4 my-2 w-full bg-gary-200 border text-gray-700 border-gray-900 focus:outline-none focus:ring focus:border-gray-400 " style="width: 290px;">
+                        </div>
+                    </div>
+
+
+                    
+                        <div class="flex justify-center items-center">
+                            <button type="submit" class="bg-gray-900 text-white font-bold px-4 py-1.5 ml-26 rounded-md hover:bg-white hover:text-black">Submit</button>
+                        </div>
+                        
+                        <!-- <a href="/admin" class="text-gray-900 ">
+                            <i class="bi bi-x-lg"></i>
+                        </a> -->
+                    
+                </form>
+            </div>
+        </div>
+
+        <script>
+
+            function showDeleteConfirmation(professorId) {
+                const confirmationPopup = document.getElementById('deleteConfirmationPopup');
+                confirmationPopup.style.display = 'flex';
+
+                // Set the professorId as a data attribute in the Confirm button
+                const confirmButton = document.getElementById('confirmButton');
+                confirmButton.setAttribute('data-professor-id', professorId);
+            }
+
+            function cancelDelete() {
+                const confirmationPopup = document.getElementById('deleteConfirmationPopup');
+                confirmationPopup.style.display = 'none';
+            }
+
+            function confirmDelete() {
+                // Get the professorId from the Confirm button data attribute
+                const confirmButton = document.getElementById('confirmButton');
+                const professorId = confirmButton.getAttribute('data-professor-id');
+
+                // Execute the delete action or make an API call
+                // You can replace the following line with your actual API call
+                window.location.href = '/admin/delete/' + professorId;
+
+                // Hide the confirmation popup after confirmation
+                const confirmationPopup = document.getElementById('deleteConfirmationPopup');
+                confirmationPopup.style.display = 'none';
+            }
+        </script>
+
+</body>
+
+</html>
