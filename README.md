@@ -1,21 +1,98 @@
-# dentTechEdu :  Revolutionizing Dental Prosthesis Training with Cutting-Edge Technology
 
-# Version [1.1.0]
+# 🦷 dentTechEdu: Revolutionizing Dental Prosthesis Training
 
-"DentTechEdu" is an innovative web and mobile application designed to transform the landscape of dental prosthesis training by incorporating state-of-the-art technology. This platform provides dental professionals with a comprehensive toolset for learning and practicing various aspects of prosthodontics, leveraging advanced features tailored for both web and mobile devices.
+> Empowering dental professionals with cutting-edge tools for learning and practicing prosthodontics.
+<p align="center">
+  <img src="https://img.shields.io/badge/React%20Native-0.70.8-blue?logo=react" alt="React Native"/>
+  <img src="https://img.shields.io/badge/Thymeleaf-3.0-red?logo=thymeleaf" alt="Thymeleaf"/>
+  <img src="https://img.shields.io/badge/Spring%20Boot-3.0-green?logo=spring" alt="Spring Boot"/>
+  <img src="https://img.shields.io/badge/MySQL-8.0-blue?logo=mysql" alt="MySQL"/>
+  <img src="https://img.shields.io/badge/Docker-24-blue?logo=docker" alt="Docker"/>
+  <img src="https://img.shields.io/badge/Java-17-orange?logo=java" alt="Java"/>
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License"/>
+</p>
 
-## Software Stack
+## 📑 Table of Contents
+- [Features](#-features)
+- [Requirements](#requirements)
+- [Tech Stack](#-tech-stack)
+- [Installation](#-installation)
+- [Demo Video](#-demo-video)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [License](#-license)
 
-- *React Native:* A JavaScript framework for building cross-platform mobile applications
-- *Thymeleaf:* A server-side Java template engine for web and standalone environments.
-- *Spring Boot:* A Java-based framework that simplifies the development of stand-alone, production-grade Spring-based applications.
-- *Java:* A high-level, object-oriented programming language.
-- *Java script:* A programming language commonly used in web development for adding interactivity and dynamic behavior to websites.
-- *HTML:* The standard markup language for creating web pages and web applications. HTML defines the structure and content of a webpage.
-- *MySQL:* An open-source relational database management system (RDBMS) that uses structured query language (SQL) for managing and manipulating data.
+## ✨ Features
+- 🌐 Cross-platform: Web + Mobile.  
+- 🔬 Interactive prosthesis simulations.  
+- 📈 Progress tracking and analytics.  
+- 🔒 Secure login with admin and teacher roles.  
+- 🛠️ Powered by React Native, Thymeleaf, Spring Boot, and MySQL.  
 
-## Project Structure
+## Requirements
 
-1. *Web Application (Frontend & Backend Integration):* Developed with Thymeleaf, Spring Boot, and Spring Security. The frontend is built with Thymeleaf, providing a responsive and user-friendly interface. Spring Boot powers the backend, offering RESTful APIs and seamless integration with the frontend.
+- **Git** (to clone the repository)  
+- **Node.js >= 16** and **npm / yarn** (for the mobile app)  
+- **Expo Go app** (to run the mobile app on a physical device)  
+- **Java JDK 11+** (for the backend)  
+- **Docker & Docker Compose** (to run the backend + MySQL containerized)
 
-2. *Mobile Application:* Developed with React Native.
+
+
+## 🏗️ Tech Stack
+- **Mobile**: React Native, JavaScript  
+- **Web**: Thymeleaf, Spring Boot, Spring Security  
+- **Database**: MySQL  
+- **Others**: HTML, Docker  
+
+## 🚀 Installation
+
+### 📱 Mobile Setup
+1. Clone the repo and go to `mobile` folder  
+2. Install dependencies:
+   ```bash
+   npm install
+3. Start app on Android:
+   ```bash
+   npx react-native start --reset-cache
+4. Update `config.js` with your IP address
+5. Run emulator from Android Studio
+
+
+### 💻 Web Setup
+1. Pull backend image:
+   ```bash
+   docker pull mohjamoutawadii1164/pfa2024:backend
+2. Create network:
+   ```bash
+   docker network create mohja
+3. Start MySQL & phpMyAdmin:
+   ```bash
+   docker run --name mysql-container --network mohja -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=dents -d mysql:latest
+   docker run --name phpmyadmin-container --network mohja -d --link mysql-container:db -p 8084:80 phpmyadmin
+4. Start backend:
+   ```bash
+   docker run --name backend-container --net mohja -p 5050:5050 --link mysql-container:mysql \
+   -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/dents \
+   -e SPRING_DATASOURCE_USERNAME=root \
+   -e SPRING_DATASOURCE_PASSWORD=root \
+   mohjamoutawadii1164/pfa2024:backend
+
+5. Access app at http://localhost:5050/login
+- Username: admin
+- Password: 1234
+
+## 🎬 Demo Video
+
+
+## 🗺️ Roadmap
+- AI-powered assessments
+- 3D prosthesis modeling integration
+- Multi-language support
+- Certificates of completion
+
+## 🤝 Contributing
+Contributions are welcome! Please open an issue or submit a pull request. Ensure your code adheres to the project's coding style and includes comprehensive tests.
+
+## ⚖️ License
+MIT License © 2024 Salma191 & Mohjamoutawadii & AyoubMechkour2020
