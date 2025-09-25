@@ -85,6 +85,10 @@
 ## 🎬 Demo Video
 
 
+https://github.com/user-attachments/assets/a79ae343-3ca3-48ff-ad78-1ec2011c834e
+
+
+
 ## 🗺️ Roadmap
 - AI-powered assessments
 - 3D prosthesis modeling integration
