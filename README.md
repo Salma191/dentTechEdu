@@ -14,7 +14,7 @@
 
 ## 📑 Table of Contents
 - [Features](#-features)
-- [Requirements](#requirements)
+- [Requirements](#-requirements)
 - [Tech Stack](#-tech-stack)
 - [Installation](#-installation)
 - [Demo Video](#-demo-video)
@@ -31,7 +31,7 @@
 - 🛡️ Admin: Manage professor accounts with full CRUD operations.
 - 🌐 Cross-platform: Web and Mobile access.
 
-## Requirements
+## 📋 Requirements
 
 - **Git** (to clone the repository)  
 - **Node.js >= 16** and **npm / yarn** (for the mobile app)  
