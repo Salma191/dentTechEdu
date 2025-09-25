@@ -23,11 +23,13 @@
 - [License](#-license)
 
 ## ✨ Features
-- 🌐 Cross-platform: Web + Mobile.  
-- 🔬 Interactive prosthesis simulations.  
-- 📈 Progress tracking and analytics.  
-- 🔒 Secure login with admin and teacher roles.  
-- 🛠️ Powered by React Native, Thymeleaf, Spring Boot, and MySQL.  
+- 📊 Dashboards & analytics: Personalized views and progress curves for professors and students.
+- 👩‍🏫 Professors: Manage groups, students, teeth, preparations, and validate practical works.
+- 🎓 Students: Submit, track, and review prosthesis practical works with real-time progress tracking.
+- 🦷 Dental simulations: Capture and process dental images with OpenCV for taper angles and line detection.
+- 👤 Role-based access: Secure login for administrators, professors, and students.
+- 🛡️ Admin: Manage professor accounts with full CRUD operations.
+- 🌐 Cross-platform: Web and Mobile access.
 
 ## Requirements
 
